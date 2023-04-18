@@ -1,6 +1,6 @@
 import React, { ReactElement, useEffect, useRef } from 'react';
 import { DeviceEventEmitter, Dimensions, EmitterSubscription, View } from 'react-native';
-import { EVENT } from './index';
+import { EVENT } from './common';
 import _ from 'lodash';
 
 type DetectType = 'completely' | 'incompletely';

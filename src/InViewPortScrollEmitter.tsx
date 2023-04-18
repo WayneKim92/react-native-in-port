@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { DeviceEventEmitter, FlatList, ScrollView } from 'react-native';
 import React, { ReactElement, useCallback } from 'react';
-import { EVENT, Payload } from './index';
+import { EVENT, Payload } from './common';
 
 interface InViewPortScrollEmitterProps {
   children: ReactElement;
