@@ -35,11 +35,10 @@ const AppForScrollViewExample = () => {
 const AppForFlatListExample = () => {
   return (
     <View>
-      <InViewPortScrollEmitter throttleTime={500}>
+      <InViewPortScrollEmitter throttleTime={1000} isFocused={true}>
         <FlatList data={colors} renderItem={(data) => {
           return (
             <InViewPort
-              viewportMargin={{ top: 0 }}
               detectType={'incompletely'}
               onViewport={(status) => {
                 if (status) console.log(`${data.item} IN`);

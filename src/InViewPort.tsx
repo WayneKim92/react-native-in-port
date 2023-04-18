@@ -1,5 +1,7 @@
 import React, { ReactElement, useEffect, useRef } from 'react';
 import { DeviceEventEmitter, Dimensions, EmitterSubscription, View } from 'react-native';
+import { EVENT } from './index';
+import _ from 'lodash';
 
 type DetectType = 'completely' | 'incompletely';
 
@@ -20,15 +22,23 @@ interface IsOnViewportProps {
   };
 }
 
+const logLayoutWithThrottle = _.throttle(() => {
+  console.debug({ origin: 'layout' });
+}, 1000, { leading: true, trailing: false });
+
 const InViewPort = (props: IsOnViewportProps) => {
-  const { onViewport, viewportMargin, detectType = 'completely', subscribeScroll = true } = props;
+  const {
+    onViewport,
+    viewportMargin,
+    detectType = 'completely',
+    subscribeScroll = true,
+  } = props;
   // const exposureCount = useRef(0);
 
   const ref = useRef<View>(null);
 
   const handleMeasure = (_x: number, _y: number, width: number, height: number, pageX: number, pageY: number) => {
-    const windowHeight = Dimensions.get('window').height;
-    const windowWidth = Dimensions.get('window').width;
+    const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
     const defaultViewport = {
       top: 0,
@@ -71,11 +81,14 @@ const InViewPort = (props: IsOnViewportProps) => {
     };
     const isDetected = detectCondition[detectType];
 
+    // 이름 변경하자
     onViewport && onViewport(isDetected);
   };
 
   const handleLayout = () => {
     if (ref.current) {
+      logLayoutWithThrottle();
+
       ref.current.measure(handleMeasure);
     }
   };
@@ -88,18 +101,16 @@ const InViewPort = (props: IsOnViewportProps) => {
   useEffect(() => {
     let eventListener: EmitterSubscription | undefined;
 
-    if(subscribeScroll){
-      eventListener = DeviceEventEmitter.addListener('track', handleScroll);
+    if (subscribeScroll) {
+      eventListener = DeviceEventEmitter.addListener(EVENT, handleScroll);
     }
 
     return () => {
-      if(eventListener && eventListener.remove){
+      if (eventListener && eventListener.remove) {
         eventListener.remove();
       }
     };
   }, []);
-
-  // TODO: React Navigation 지원하자.
 
   return (
     <View ref={ref} onLayout={handleLayout}>
