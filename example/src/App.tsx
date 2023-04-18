@@ -16,7 +16,7 @@ export default function App() {
         <ScrollView style={{ flexGrow: 1, flexShrink: 1 }} scrollEventThrottle={1}>
           {colors.map((color, index) => (
             <IsOnViewport
-              id={`${index}${color}`}
+              viewportMargin={{top:0}}
               onViewport={(status) => {
                 if (status) console.log(`${color} IN`);
                 else console.log(`${color} OUT`);

@@ -1,10 +1,10 @@
 import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
-import { View, DeviceEventEmitter, ScrollView, Dimensions } from 'react-native';
+import { View, DeviceEventEmitter, Dimensions } from 'react-native';
 import _ from 'lodash';
 
 // 특정 컴포넌트
 interface OnViewportProps {
-  children: ReactElement<typeof ScrollView>;
+  children: ReactElement;
   delay?: number;
 }
 
@@ -17,30 +17,40 @@ export const OnViewport = (props: OnViewportProps) => {
   }, delay);
 
   const _onScroll = useCallback((event) => {
-    const childOnScroll = props.children.props.onScroll;
+    const childOnScroll = children.props.onScroll;
 
     childOnScroll && childOnScroll(event);
 
     trackWithDelay();
   }, []);
 
-  // console.log('dd', props.children instanceof ScrollView);
   // if(React.Children.only(children).type === ScrollView){
   //   console.log('!!!')
   // }
 
   return (
-    React.cloneElement(props.children, {
+    React.cloneElement(children, {
       onScroll: _onScroll,
     })
   );
 };
 
+type DetectType = 'completely' | 'incompletely';
+
+type DetectTypeObject = {
+  [key in DetectType]: boolean;
+};
+
 interface IsOnViewportProps {
-  id?: string | number;
   children: ReactElement;
-  onViewport: () => void;
-  // detectType: ''
+  onViewport: (isDetected: boolean) => void;
+  detectType?: DetectType;
+  viewportMargin?: {
+    top?: number;
+    right?: number;
+    bottom?: number;
+    left?: number;
+  };
   // condition?: (measure: { x: number, y: number, width: number, height: number, pageX: number, pageY: number, exposureCount: number }) => boolean;
   // countRange?: {
   //   min: 0,
@@ -49,23 +59,31 @@ interface IsOnViewportProps {
 }
 
 export const IsOnViewport = (props: IsOnViewportProps) => {
-  const { id, onViewport } = props;
+  const { onViewport, viewportMargin, detectType = 'completely' } = props;
   // const exposureCount = useRef(0);
 
-  const ref = useRef(null);
+  const ref = useRef<View>(null);
 
-  const handleMeasure = (x, y, width, height, pageX, pageY) => {
+  const handleMeasure = (_x: number, _y: number, width: number, height: number, pageX: number, pageY: number) => {
     const windowHeight = Dimensions.get('window').height;
     const windowWidth = Dimensions.get('window').width;
-    // 조금이라고 걸치면, viewport 진입이라고 취급하기
 
     // Viewport의 좌측 상단은 항상 (0,0) 이다.
-    const viewport = {
+    const defaultViewport = {
       top: 0,
       right: windowWidth,
       bottom: windowHeight,
       left: 0,
     };
+
+    const viewportWithSpaceVariation = viewportMargin ? {
+      top: viewportMargin.top ? 0 + viewportMargin.top : 0,
+      right: viewportMargin.right ? windowWidth - viewportMargin.right : windowWidth,
+      bottom: viewportMargin.bottom ? windowHeight - viewportMargin.bottom : windowHeight,
+      left: viewportMargin.left ? 0 + viewportMargin.left : 0,
+    } : undefined;
+
+    const viewport = viewportWithSpaceVariation ? viewportWithSpaceVariation : defaultViewport;
 
     const element = {
       top: pageY,
@@ -75,7 +93,7 @@ export const IsOnViewport = (props: IsOnViewportProps) => {
     };
 
     // 완전히 들어온 경우,
-    const isFullyContained =
+    const isCompletelyContained =
       element.top >= viewport.top &&
       element.right <= viewport.right &&
       element.bottom <= viewport.bottom &&
@@ -88,9 +106,13 @@ export const IsOnViewport = (props: IsOnViewportProps) => {
       viewport.top < element.bottom &&
       viewport.bottom > element.top;
 
-    const status = isIncompletelyContained;
+    const detectCondition: DetectTypeObject = {
+      'completely': isCompletelyContained,
+      'incompletely': isIncompletelyContained,
+    };
+    const isDetected = detectCondition[detectType];
 
-    onViewport && onViewport(status);
+    onViewport && onViewport(isDetected);
   };
 
   const handleLayout = () => {
@@ -98,7 +120,6 @@ export const IsOnViewport = (props: IsOnViewportProps) => {
       ref.current.measure(handleMeasure);
     }
   };
-
 
   const handleScroll = () => {
     // @ts-ignore
