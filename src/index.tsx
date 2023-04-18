@@ -75,11 +75,20 @@ export const IsOnViewport = (props: IsOnViewportProps) => {
     };
 
     // 완전히 들어온 경우,
-    const isFullyContained = element.top >= viewport.top && element.right <= viewport.right && element.bottom <= viewport.bottom && element.left >= viewport.left
+    const isFullyContained =
+      element.top >= viewport.top &&
+      element.right <= viewport.right &&
+      element.bottom <= viewport.bottom &&
+      element.left >= viewport.left;
 
     // 조금이라도 걸친 경우
+    const isIncompletelyContained =
+      viewport.left < element.right &&
+      viewport.right > element.left &&
+      viewport.top < element.bottom &&
+      viewport.bottom > element.top;
 
-    const status = isFullyContained;
+    const status = isIncompletelyContained;
 
     onViewport && onViewport(status);
   };
