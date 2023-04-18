@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { View, ScrollView, ColorValue } from 'react-native';
-import { IsOnViewport, OnViewport } from 'react-native-on-viewport';
+import { IsOnViewport, InViewPortScrollEmitter } from 'react-native-on-viewport';
 
 const Box = ({ backgroundColor }: { backgroundColor: ColorValue }) => <View
   style={{ backgroundColor, height: 300, width: 400 }} />;
@@ -12,11 +12,12 @@ export default function App() {
   // @ts-ignore
   return (
     <View>
-      <OnViewport>
+      <InViewPortScrollEmitter throttleTime={1000}>
         <ScrollView style={{ flexGrow: 1, flexShrink: 1 }} scrollEventThrottle={1}>
           {colors.map((color, index) => (
             <IsOnViewport
               viewportMargin={{top:0}}
+              detectType={'incompletely'}
               onViewport={(status) => {
                 if (status) console.log(`${color} IN`);
                 else console.log(`${color} OUT`);
@@ -27,7 +28,7 @@ export default function App() {
             </IsOnViewport>
           ))}
         </ScrollView>
-      </OnViewport>
+      </InViewPortScrollEmitter>
     </View>
 
   );

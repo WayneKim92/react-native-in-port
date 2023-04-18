@@ -1,20 +1,18 @@
 import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
-import { View, DeviceEventEmitter, Dimensions } from 'react-native';
+import { View, DeviceEventEmitter, Dimensions, EmitterSubscription, ScrollView, FlatList } from 'react-native';
 import _ from 'lodash';
 
-// 특정 컴포넌트
 interface OnViewportProps {
   children: ReactElement;
-  delay?: number;
+  throttleTime?: number;
 }
 
-// 구독-발행
-export const OnViewport = (props: OnViewportProps) => {
-  const { delay = 1000, children } = props;
+export const InViewPortScrollEmitter = (props: OnViewportProps) => {
+  const { throttleTime = 500, children } = props;
 
   const trackWithDelay = _.throttle(() => {
     DeviceEventEmitter.emit('track');
-  }, delay);
+  }, throttleTime);
 
   const _onScroll = useCallback((event) => {
     const childOnScroll = children.props.onScroll;
@@ -24,9 +22,10 @@ export const OnViewport = (props: OnViewportProps) => {
     trackWithDelay();
   }, []);
 
-  // if(React.Children.only(children).type === ScrollView){
-  //   console.log('!!!')
-  // }
+  const childrenType = React.Children.only(children).type;
+  if(childrenType !== ScrollView && childrenType !== FlatList ){
+    throw Error('🐞 In InViewPort Package : children prop of InViewPortScrollEmitter can only be ScrollView or FlatList.')
+  }
 
   return (
     React.cloneElement(children, {
@@ -44,6 +43,7 @@ type DetectTypeObject = {
 interface IsOnViewportProps {
   children: ReactElement;
   onViewport: (isDetected: boolean) => void;
+  subscribeScroll?: boolean;
   detectType?: DetectType;
   viewportMargin?: {
     top?: number;
@@ -51,15 +51,10 @@ interface IsOnViewportProps {
     bottom?: number;
     left?: number;
   };
-  // condition?: (measure: { x: number, y: number, width: number, height: number, pageX: number, pageY: number, exposureCount: number }) => boolean;
-  // countRange?: {
-  //   min: 0,
-  //   max: 1
-  // };
 }
 
 export const IsOnViewport = (props: IsOnViewportProps) => {
-  const { onViewport, viewportMargin, detectType = 'completely' } = props;
+  const { onViewport, viewportMargin, detectType = 'completely', subscribeScroll = true } = props;
   // const exposureCount = useRef(0);
 
   const ref = useRef<View>(null);
@@ -68,7 +63,6 @@ export const IsOnViewport = (props: IsOnViewportProps) => {
     const windowHeight = Dimensions.get('window').height;
     const windowWidth = Dimensions.get('window').width;
 
-    // Viewport의 좌측 상단은 항상 (0,0) 이다.
     const defaultViewport = {
       top: 0,
       right: windowWidth,
@@ -92,14 +86,12 @@ export const IsOnViewport = (props: IsOnViewportProps) => {
       left: pageX,
     };
 
-    // 완전히 들어온 경우,
     const isCompletelyContained =
       element.top >= viewport.top &&
       element.right <= viewport.right &&
       element.bottom <= viewport.bottom &&
       element.left >= viewport.left;
 
-    // 조금이라도 걸친 경우
     const isIncompletelyContained =
       viewport.left < element.right &&
       viewport.right > element.left &&
@@ -127,10 +119,16 @@ export const IsOnViewport = (props: IsOnViewportProps) => {
   };
 
   useEffect(() => {
-    const eventListener = DeviceEventEmitter.addListener('track', handleScroll);
+    let eventListener: EmitterSubscription | undefined;
+
+    if(subscribeScroll){
+      eventListener = DeviceEventEmitter.addListener('track', handleScroll);
+    }
 
     return () => {
-      eventListener.remove();
+      if(eventListener && eventListener.remove){
+        eventListener.remove();
+      }
     };
   }, []);
 
