@@ -3,8 +3,12 @@ import { View, ScrollView, StyleSheet, FlatList } from 'react-native';
 import { createPort } from 'react-native-in-port';
 import { colors } from '../constant';
 
-const { LightHouse: LightHouse1, Ship: Ship1 } = createPort('alpha');
-const { LightHouse: LightHouse2, Ship: Ship2 } = createPort('beta');
+/**
+ * Do not use radar beacons that have been used on other screens unless you have a specific intent.
+ * LightHouse and Ship measure when radarBeacon event registered in createPort occurs.
+ */
+const { LightHouse: LightHouse1, Ship: Ship1 } = createPort('HORIZONTAL1');
+const { LightHouse: LightHouse2, Ship: Ship2 } = createPort('HORIZONTAL2');
 
 const HorizontalExample = () => {
   return (
@@ -14,6 +18,7 @@ const HorizontalExample = () => {
           horizontal={true}
           style={styles.scrollView}
           scrollEventThrottle={1}
+          showsHorizontalScrollIndicator={false}
         >
           {colors.map((color, index) => (
             <Ship1
@@ -24,7 +29,7 @@ const HorizontalExample = () => {
                 return { backgroundColor: isIn ? 'black' : color };
               }}
             >
-              <View style={{ width: 150, height: 300, backgroundColor: color }} />
+              <View style={{ width: 150, height: '100%', backgroundColor: color }} />
             </Ship1>
           ))}
         </ScrollView>
@@ -32,8 +37,9 @@ const HorizontalExample = () => {
 
       <LightHouse2 throttleTime={100}>
         <FlatList
-          horizontal={true}
           data={colors}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
           renderItem={(data) => {
             return (
               <Ship2
@@ -44,7 +50,7 @@ const HorizontalExample = () => {
                   return { backgroundColor: isIn ? 'black' : data.item };
                 }}
               >
-                <View style={{ width: 200, height: 300, backgroundColor: data.item }} />
+                <View style={{ width: 200, height: '100%', backgroundColor: data.item }} />
               </Ship2>
             );
           }} />
