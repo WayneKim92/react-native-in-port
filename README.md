@@ -10,6 +10,10 @@ npm install react-native-in-port
 
 ## Example
 
+<div align="center">
+  <video src="https://user-images.githubusercontent.com/75321423/233711305-2c144676-641c-49c3-97ec-0705dd04195a.mov"></video>
+</div>
+
 ```js
 const ScrollViewExample = () => {
   return (
