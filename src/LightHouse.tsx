@@ -1,7 +1,7 @@
-import _ from 'lodash';
-import { DeviceEventEmitter, FlatList, ScrollView, LayoutChangeEvent } from 'react-native';
 import React, { ReactElement, useCallback, useRef } from 'react';
+import { DeviceEventEmitter, FlatList, ScrollView, LayoutChangeEvent } from 'react-native';
 import { useIsFocused, useFocusEffect } from '@react-navigation/native';
+import _ from 'lodash';
 
 export interface LightHouseProps {
   children: ReactElement;
@@ -21,7 +21,6 @@ const LightHouse = (props: LightHouseProps) => {
   const isFocused = useIsFocused();
 
   const emitTrackEvent = (message: string) => {
-    console.debug(message);
     DeviceEventEmitter.emit(radarBeacon, message);
   };
 
@@ -38,7 +37,7 @@ const LightHouse = (props: LightHouseProps) => {
 
   useFocusEffect(useCallback(() => {
     // When useFocusEffect is executed for the first time, it is before the onLayout event occurs.
-    if(isFirstFocus.current === true){
+    if(isFirstFocus.current){
       isFirstFocus.current = false;
       return;
     }

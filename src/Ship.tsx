@@ -1,7 +1,6 @@
-import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
-import { DeviceEventEmitter, Dimensions, EmitterSubscription, View } from 'react-native';
+import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import { DeviceEventEmitter, Dimensions, View } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import _ from 'lodash';
 
 type DetectType = 'completely' | 'incompletely';
 
@@ -9,34 +8,45 @@ type DetectTypeObject = {
   [key in DetectType]: boolean;
 };
 
+type ViewportMargin = {
+  top?: number;
+  right?: number;
+  bottom?: number;
+  left?: number;
+}
+
 export interface ShipProps {
   radarBeacon: string;
   children: ReactElement;
-  onPort: (isDetected: boolean) => void;
+  // The return value is passed as children's props.
+  onPort: (isDetected: boolean) => any;
   subscribeScroll?: boolean;
   detectType?: DetectType;
-  viewportMargin?: {
-    top?: number;
-    right?: number;
-    bottom?: number;
-    left?: number;
-  };
+  viewportMargin?: ViewportMargin;
 }
 
-const logLayoutWithThrottle = _.throttle(() => {
-  console.debug({ origin: 'layout' });
-}, 1000, { leading: true, trailing: false });
+const getViewportWithSpaceVariation = (viewportMargin: ViewportMargin | undefined) => {
+  const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
+
+  return viewportMargin ? {
+    top: viewportMargin.top ? viewportMargin.top : 0,
+    right: viewportMargin.right ? windowWidth - viewportMargin.right : windowWidth,
+    bottom: viewportMargin.bottom ? windowHeight - viewportMargin.bottom : windowHeight,
+    left: viewportMargin.left ? viewportMargin.left : 0,
+  } : undefined;
+};
 
 const Ship = (props: ShipProps) => {
   const {
     radarBeacon,
+    children,
     onPort,
     viewportMargin,
     detectType = 'completely',
   } = props;
-  // const exposureCount = useRef(0);
 
-  const ref = useRef<View>(null);
+  const [childrenProps, setChildrenProps] = useState(null);
+  const viewRef = useRef<View>(null);
 
   const isFocused = useIsFocused();
 
@@ -50,12 +60,7 @@ const Ship = (props: ShipProps) => {
       left: 0,
     };
 
-    const viewportWithSpaceVariation = viewportMargin ? {
-      top: viewportMargin.top ? 0 + viewportMargin.top : 0,
-      right: viewportMargin.right ? windowWidth - viewportMargin.right : windowWidth,
-      bottom: viewportMargin.bottom ? windowHeight - viewportMargin.bottom : windowHeight,
-      left: viewportMargin.left ? 0 + viewportMargin.left : 0,
-    } : undefined;
+    const viewportWithSpaceVariation = getViewportWithSpaceVariation(viewportMargin);
 
     const viewport = viewportWithSpaceVariation ? viewportWithSpaceVariation : defaultViewport;
 
@@ -84,39 +89,40 @@ const Ship = (props: ShipProps) => {
     };
     const isDetected = detectCondition[detectType];
 
-    onPort && onPort(isDetected);
+    if (onPort) {
+      const newChildrenProps = onPort(isDetected);
+
+      if (newChildrenProps) {
+        setChildrenProps(newChildrenProps);
+      }
+    }
   };
 
   const handleLayout = useCallback(() => {
-    if (ref.current) {
-      logLayoutWithThrottle();
-
+    if (viewRef.current) {
       if (isFocused) {
-        ref.current.measure(handleMeasure);
+        viewRef.current.measure(handleMeasure);
       }
     }
   }, [isFocused]);
 
-  const handleScroll = () => {
-    // @ts-ignore
-    ref.current.measure(handleMeasure);
-  };
-
   useEffect(() => {
-    let eventListener: EmitterSubscription | undefined;
-
-    eventListener = DeviceEventEmitter.addListener(radarBeacon, handleScroll);
+    const eventListener = DeviceEventEmitter.addListener(radarBeacon, () => {
+      // @ts-ignore
+      viewRef.current.measure(handleMeasure);
+    });
 
     return () => {
-      if (eventListener && eventListener.remove) {
-        eventListener.remove();
-      }
+      eventListener.remove();
     };
   }, []);
 
+  const newChildren = childrenProps ?
+    React.cloneElement(children, childrenProps) : children;
+
   return (
-    <View ref={ref} onLayout={handleLayout}>
-      {props.children}
+    <View ref={viewRef} onLayout={handleLayout}>
+      {newChildren ? newChildren : children}
     </View>
   );
 };

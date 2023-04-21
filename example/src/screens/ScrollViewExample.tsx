@@ -1,30 +1,26 @@
 import * as React from 'react';
-import { ScrollView, View } from 'react-native';
-import { Box } from '../components';
-
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { createPort } from 'react-native-on-viewport';
+import { Box } from '../components';
+import { colors } from '../constant';
 
-const { LightHouse, Ship } = createPort('2');
-
-const colors = ['red', 'orange', 'yellow', 'green', 'blue'];
+const { LightHouse, Ship } = createPort('beta');
 
 const ScrollViewExample = () => {
   return (
     <View>
-      <LightHouse throttleTime={1000}>
+      <LightHouse throttleTime={100}>
         <ScrollView
-          style={{ flexGrow: 1, flexShrink: 1 }}
+          style={styles.scrollView}
           scrollEventThrottle={1}
         >
           {colors.map((color, index) => (
             <Ship
-              viewportMargin={{ top: 0 }}
-              detectType={'incompletely'}
-              onPort={(status: any) => {
-                if (status) console.log(`${color} IN`);
-                else console.log(`${color} OUT`);
-              }}
               key={index}
+              detectType={'completely'}
+              onPort={(isIn) => {
+                return { backgroundColor: isIn ? 'black' : color };
+              }}
             >
               <Box backgroundColor={color} />
             </Ship>
@@ -34,5 +30,10 @@ const ScrollViewExample = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  scrollView: { flexGrow: 1, flexShrink: 1 },
+
+});
 
 export default ScrollViewExample;

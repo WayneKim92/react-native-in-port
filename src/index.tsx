@@ -5,6 +5,7 @@ import { default as Ship, ShipProps } from './Ship';
 type LightHouseWithoutRadarBeaconProps = Omit<LightHouseProps, 'radarBeacon'>;
 type ShipPropsWithoutRadarBeaconProps = Omit<ShipProps, 'radarBeacon'>;
 
+// radarBeacon - Signals for LightHouse and Ship to communicate
 export const createPort = (radarBeacon: string) => {
   return {
     LightHouse: ({ children, ...otherProps }: LightHouseWithoutRadarBeaconProps) => (
