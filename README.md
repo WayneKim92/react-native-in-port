@@ -1,6 +1,6 @@
 # react-native-in-port
 
-Detect if a component is on a Viewport.
+Use LightHouse and Ship to detect if a children component is inside the (View)port.
 
 ## Installation
 
@@ -8,16 +8,49 @@ Detect if a component is on a Viewport.
 npm install react-native-in-port
 ```
 
-## Usage
+## Example
 
 ```js
-import { multiply } from 'react-native-in-port';
+const ScrollViewExample = () => {
+  return (
+    // LightHouse's child component can only be ScrollView or FlatList.
+    // When scroll and focus events occur, LightHouse asks the Ship if it is within a (view)port.
+    <LightHouse>
+      <ScrollView>
+        {colors.map((color, index) => (
+          <Ship
+            key={index}
 
-// ...
+            // Detects when a child component is completely contained within the viewport.
+            detectType={'completely'} // or incompletely
 
-const result = await multiply(3, 7);
+            // Detect based on the specific orientation of the component.
+            detectDirection={'vertical'} // or both | horizontal
+
+            // Adjust the detection condition by adjusting the viewport area.
+            viewportMargin={{ top: 100, bottom: 100, left: 100}}
+
+            onPort={(isIn) => {
+              // You may call the tracking API in this part.
+              // --------------------------------------------
+              // await analytics().logEvent('viewed', {
+              //   useId: 3745092,
+              //   description: 'User viewed an ad space.',
+              // })
+              // --------------------------------------------
+
+              // Return values can be passed as child props.
+              return { backgroundColor: isIn ? 'black' : color };
+            }}
+          >
+            <Box backgroundColor={color} />
+          </Ship>
+        ))}
+      </ScrollView>
+    </LightHouse>
+  );
+};
 ```
-
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
