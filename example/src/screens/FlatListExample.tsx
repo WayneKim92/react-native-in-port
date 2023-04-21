@@ -2,20 +2,21 @@ import * as React from 'react';
 import { FlatList, View } from 'react-native';
 import { Box } from '../components';
 
-import { Ship, LightHouse } from 'react-native-on-viewport';
+import { createPort } from 'react-native-on-viewport';
 
-const colors = ['pink', 'gray', 'brown', 'yellow', 'black'];
+const colors = ['Violet', 'gray', 'brown', 'black'];
+
+const { LightHouse, Ship } = createPort('1');
 
 const FlatListExample = () => {
   return (
     <View>
-      <LightHouse throttleTime={1000} radarBeacon={'1'}>
+      <LightHouse throttleTime={1000}>
         <FlatList data={colors} renderItem={(data) => {
           return (
             <Ship
-              radarBeacon={'1'}
               detectType={'incompletely'}
-              onPort={(status) => {
+              onPort={(status: any) => {
                 if (status) console.log(`${data.item} IN`);
                 else console.log(`${data.item} OUT`);
               }}

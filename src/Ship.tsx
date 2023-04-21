@@ -8,7 +8,7 @@ type DetectTypeObject = {
   [key in DetectType]: boolean;
 };
 
-interface ShipProps {
+export interface ShipProps {
   radarBeacon: string;
   children: ReactElement;
   onPort: (isDetected: boolean) => void;

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { DeviceEventEmitter, FlatList, ScrollView } from 'react-native';
 import React, { ReactElement, useCallback } from 'react';
 
-interface LightHouseProps {
+export interface LightHouseProps {
   children: ReactElement;
   radarBeacon: string;
   throttleTime?: number;
