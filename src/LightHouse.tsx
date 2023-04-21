@@ -4,14 +4,14 @@ import React, { ReactElement, useCallback } from 'react';
 
 interface InViewPortScrollEmitterProps {
   children: ReactElement;
-  radioId: string;
+  radarBeacon: string;
   throttleTime?: number;
   isFocused?: boolean;
 }
 
 const LightHouse = (props: InViewPortScrollEmitterProps) => {
   const {
-    radioId,
+    radarBeacon,
     throttleTime = 500,
     children,
     isFocused,
@@ -24,7 +24,7 @@ const LightHouse = (props: InViewPortScrollEmitterProps) => {
 
   const emitTrackEvent = (message: string) => {
     console.debug(message);
-    DeviceEventEmitter.emit(radioId, message);
+    DeviceEventEmitter.emit(radarBeacon, message);
   };
 
   const trackWithDelay = _.throttle(emitTrackEvent, throttleTime);

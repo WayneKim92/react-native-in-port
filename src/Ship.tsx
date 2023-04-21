@@ -9,7 +9,7 @@ type DetectTypeObject = {
 };
 
 interface IsOnViewportProps {
-  radioId: string;
+  radarBeacon: string;
   children: ReactElement;
   onPort: (isDetected: boolean) => void;
   subscribeScroll?: boolean;
@@ -28,7 +28,7 @@ const logLayoutWithThrottle = _.throttle(() => {
 
 const Ship = (props: IsOnViewportProps) => {
   const {
-    radioId,
+    radarBeacon,
     onPort,
     viewportMargin,
     detectType = 'completely',
@@ -100,7 +100,7 @@ const Ship = (props: IsOnViewportProps) => {
   useEffect(() => {
     let eventListener: EmitterSubscription | undefined;
 
-    eventListener = DeviceEventEmitter.addListener(radioId, handleScroll);
+    eventListener = DeviceEventEmitter.addListener(radarBeacon, handleScroll);
 
     return () => {
       if (eventListener && eventListener.remove) {
