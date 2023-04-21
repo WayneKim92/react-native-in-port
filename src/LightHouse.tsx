@@ -1,12 +1,12 @@
 import _ from 'lodash';
-import { DeviceEventEmitter, FlatList, ScrollView } from 'react-native';
-import React, { ReactElement, useCallback } from 'react';
+import { DeviceEventEmitter, FlatList, ScrollView, LayoutChangeEvent } from 'react-native';
+import React, { ReactElement, useCallback, useRef } from 'react';
+import { useIsFocused, useFocusEffect } from '@react-navigation/native';
 
 export interface LightHouseProps {
   children: ReactElement;
   radarBeacon: string;
   throttleTime?: number;
-  isFocused?: boolean;
 }
 
 const LightHouse = (props: LightHouseProps) => {
@@ -14,13 +14,11 @@ const LightHouse = (props: LightHouseProps) => {
     radarBeacon,
     throttleTime = 500,
     children,
-    isFocused,
   } = props;
 
-  const childrenType = React.Children.only(children).type;
-  if (childrenType !== ScrollView && childrenType !== FlatList) {
-    throw Error('🐞 In Ship Package : children prop of LightHouse can only be ScrollView or FlatList.');
-  }
+  const isFirstFocus = useRef(true);
+
+  const isFocused = useIsFocused();
 
   const emitTrackEvent = (message: string) => {
     console.debug(message);
@@ -29,15 +27,28 @@ const LightHouse = (props: LightHouseProps) => {
 
   const trackWithDelay = _.throttle(emitTrackEvent, throttleTime);
 
-  const _onScroll = useCallback((event) => {
+  const _onScroll = (event: LayoutChangeEvent) => {
+    if (isFocused) {
+      trackWithDelay('scroll');
+    }
+
     const childOnScroll = children.props.onScroll;
-
     childOnScroll && childOnScroll(event);
-    trackWithDelay('scroll');
-  }, []);
+  };
 
-  if (isFocused) {
-    emitTrackEvent('focus');
+  useFocusEffect(useCallback(() => {
+    // When useFocusEffect is executed for the first time, it is before the onLayout event occurs.
+    if(isFirstFocus.current === true){
+      isFirstFocus.current = false;
+      return;
+    }
+
+    trackWithDelay('focus');
+  }, []));
+
+  const childrenType = React.Children.only(children).type;
+  if (childrenType !== ScrollView && childrenType !== FlatList) {
+    throw Error('🐞 In Ship Package : children prop of LightHouse can only be ScrollView or FlatList.');
   }
 
   return (

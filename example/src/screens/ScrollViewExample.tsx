@@ -12,7 +12,10 @@ const ScrollViewExample = () => {
   return (
     <View>
       <LightHouse throttleTime={1000}>
-        <ScrollView style={{ flexGrow: 1, flexShrink: 1 }} scrollEventThrottle={1}>
+        <ScrollView
+          style={{ flexGrow: 1, flexShrink: 1 }}
+          scrollEventThrottle={1}
+        >
           {colors.map((color, index) => (
             <Ship
               viewportMargin={{ top: 0 }}

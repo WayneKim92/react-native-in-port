@@ -1,5 +1,6 @@
-import React, { ReactElement, useEffect, useRef } from 'react';
+import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
 import { DeviceEventEmitter, Dimensions, EmitterSubscription, View } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import _ from 'lodash';
 
 type DetectType = 'completely' | 'incompletely';
@@ -36,6 +37,8 @@ const Ship = (props: ShipProps) => {
   // const exposureCount = useRef(0);
 
   const ref = useRef<View>(null);
+
+  const isFocused = useIsFocused();
 
   const handleMeasure = (_x: number, _y: number, width: number, height: number, pageX: number, pageY: number) => {
     const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
@@ -84,13 +87,15 @@ const Ship = (props: ShipProps) => {
     onPort && onPort(isDetected);
   };
 
-  const handleLayout = () => {
+  const handleLayout = useCallback(() => {
     if (ref.current) {
       logLayoutWithThrottle();
 
-      ref.current.measure(handleMeasure);
+      if (isFocused) {
+        ref.current.measure(handleMeasure);
+      }
     }
-  };
+  }, [isFocused]);
 
   const handleScroll = () => {
     // @ts-ignore
