@@ -1,6 +1,5 @@
 import React, { ReactElement, useEffect, useRef } from 'react';
 import { DeviceEventEmitter, Dimensions, EmitterSubscription, View } from 'react-native';
-import { EVENT } from './common';
 import _ from 'lodash';
 
 type DetectType = 'completely' | 'incompletely';
@@ -10,8 +9,9 @@ type DetectTypeObject = {
 };
 
 interface IsOnViewportProps {
+  radioId: string;
   children: ReactElement;
-  onViewport: (isDetected: boolean) => void;
+  onPort: (isDetected: boolean) => void;
   subscribeScroll?: boolean;
   detectType?: DetectType;
   viewportMargin?: {
@@ -26,12 +26,12 @@ const logLayoutWithThrottle = _.throttle(() => {
   console.debug({ origin: 'layout' });
 }, 1000, { leading: true, trailing: false });
 
-const InViewPort = (props: IsOnViewportProps) => {
+const Ship = (props: IsOnViewportProps) => {
   const {
-    onViewport,
+    radioId,
+    onPort,
     viewportMargin,
     detectType = 'completely',
-    subscribeScroll = true,
   } = props;
   // const exposureCount = useRef(0);
 
@@ -81,8 +81,7 @@ const InViewPort = (props: IsOnViewportProps) => {
     };
     const isDetected = detectCondition[detectType];
 
-    // 이름 변경하자
-    onViewport && onViewport(isDetected);
+    onPort && onPort(isDetected);
   };
 
   const handleLayout = () => {
@@ -101,9 +100,7 @@ const InViewPort = (props: IsOnViewportProps) => {
   useEffect(() => {
     let eventListener: EmitterSubscription | undefined;
 
-    if (subscribeScroll) {
-      eventListener = DeviceEventEmitter.addListener(EVENT, handleScroll);
-    }
+    eventListener = DeviceEventEmitter.addListener(radioId, handleScroll);
 
     return () => {
       if (eventListener && eventListener.remove) {
@@ -119,4 +116,4 @@ const InViewPort = (props: IsOnViewportProps) => {
   );
 };
 
-export default InViewPort;
+export default Ship;

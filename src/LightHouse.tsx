@@ -1,16 +1,17 @@
 import _ from 'lodash';
 import { DeviceEventEmitter, FlatList, ScrollView } from 'react-native';
 import React, { ReactElement, useCallback } from 'react';
-import { EVENT, Payload } from './common';
 
 interface InViewPortScrollEmitterProps {
   children: ReactElement;
+  radioId: string;
   throttleTime?: number;
   isFocused?: boolean;
 }
 
-const InViewPortScrollEmitter = (props: InViewPortScrollEmitterProps) => {
+const LightHouse = (props: InViewPortScrollEmitterProps) => {
   const {
+    radioId,
     throttleTime = 500,
     children,
     isFocused,
@@ -18,12 +19,12 @@ const InViewPortScrollEmitter = (props: InViewPortScrollEmitterProps) => {
 
   const childrenType = React.Children.only(children).type;
   if (childrenType !== ScrollView && childrenType !== FlatList) {
-    throw Error('🐞 In InViewPort Package : children prop of InViewPortScrollEmitter can only be ScrollView or FlatList.');
+    throw Error('🐞 In Ship Package : children prop of LightHouse can only be ScrollView or FlatList.');
   }
 
-  const emitTrackEvent = (payload: Payload) => {
-    console.debug(payload);
-    DeviceEventEmitter.emit(EVENT, payload);
+  const emitTrackEvent = (message: string) => {
+    console.debug(message);
+    DeviceEventEmitter.emit(radioId, message);
   };
 
   const trackWithDelay = _.throttle(emitTrackEvent, throttleTime);
@@ -32,11 +33,11 @@ const InViewPortScrollEmitter = (props: InViewPortScrollEmitterProps) => {
     const childOnScroll = children.props.onScroll;
 
     childOnScroll && childOnScroll(event);
-    trackWithDelay({ origin: 'scroll' });
+    trackWithDelay('scroll');
   }, []);
 
   if (isFocused) {
-    emitTrackEvent({ origin: 'focus' });
+    emitTrackEvent('focus');
   }
 
   return (
@@ -46,4 +47,4 @@ const InViewPortScrollEmitter = (props: InViewPortScrollEmitterProps) => {
   );
 };
 
-export default InViewPortScrollEmitter;
+export default LightHouse;

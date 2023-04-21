@@ -1,2 +1,3 @@
-export { default as InViewPortScrollEmitter } from './InViewPortScrollEmitter';
-export { default as InViewPort } from './InViewPort';
+export { default as LightHouse } from './LightHouse';
+export { default as Ship } from './Ship';
+

@@ -2,17 +2,17 @@ import * as React from 'react';
 import { FlatList, View } from 'react-native';
 import { Box } from '../components';
 
-import { InViewPort, InViewPortScrollEmitter } from 'react-native-on-viewport';
+import { Ship, LightHouse } from 'react-native-on-viewport';
 
 const colors = ['pink', 'gray', 'brown', 'yellow', 'black'];
 
 const FlatListExample = () => {
   return (
     <View>
-      <InViewPortScrollEmitter throttleTime={1000} isFocused={true}>
+      <LightHouse throttleTime={1000}>
         <FlatList data={colors} renderItem={(data) => {
           return (
-            <InViewPort
+            <Ship
               detectType={'incompletely'}
               onViewport={(status) => {
                 if (status) console.log(`${data.item} IN`);
@@ -20,10 +20,10 @@ const FlatListExample = () => {
               }}
             >
               <Box backgroundColor={data.item} />
-            </InViewPort>
+            </Ship>
           );
         }} />
-      </InViewPortScrollEmitter>
+      </LightHouse>
     </View>
   );
 };

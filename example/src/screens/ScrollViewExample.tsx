@@ -2,17 +2,17 @@ import * as React from 'react';
 import { ScrollView, View } from 'react-native';
 import { Box } from '../components';
 
-import { InViewPort, InViewPortScrollEmitter } from 'react-native-on-viewport';
+import { Ship, LightHouse } from 'react-native-on-viewport';
 
 const colors = ['blue', 'red', 'green', 'yellow', 'black'];
 
 const ScrollViewExample = () => {
   return (
     <View>
-      <InViewPortScrollEmitter throttleTime={1000}>
+      <LightHouse throttleTime={1000}>
         <ScrollView style={{ flexGrow: 1, flexShrink: 1 }} scrollEventThrottle={1}>
           {colors.map((color, index) => (
-            <InViewPort
+            <Ship
               viewportMargin={{ top: 0 }}
               detectType={'incompletely'}
               onViewport={(status) => {
@@ -22,10 +22,10 @@ const ScrollViewExample = () => {
               key={index}
             >
               <Box backgroundColor={color} />
-            </InViewPort>
+            </Ship>
           ))}
         </ScrollView>
-      </InViewPortScrollEmitter>
+      </LightHouse>
     </View>
   );
 };
