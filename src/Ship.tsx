@@ -8,7 +8,7 @@ type DetectTypeObject = {
   [key in DetectType]: boolean;
 };
 
-interface IsOnViewportProps {
+interface ShipProps {
   radarBeacon: string;
   children: ReactElement;
   onPort: (isDetected: boolean) => void;
@@ -26,7 +26,7 @@ const logLayoutWithThrottle = _.throttle(() => {
   console.debug({ origin: 'layout' });
 }, 1000, { leading: true, trailing: false });
 
-const Ship = (props: IsOnViewportProps) => {
+const Ship = (props: ShipProps) => {
   const {
     radarBeacon,
     onPort,

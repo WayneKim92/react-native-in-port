@@ -9,12 +9,13 @@ const colors = ['pink', 'gray', 'brown', 'yellow', 'black'];
 const FlatListExample = () => {
   return (
     <View>
-      <LightHouse throttleTime={1000}>
+      <LightHouse throttleTime={1000} radarBeacon={'1'}>
         <FlatList data={colors} renderItem={(data) => {
           return (
             <Ship
+              radarBeacon={'1'}
               detectType={'incompletely'}
-              onViewport={(status) => {
+              onPort={(status) => {
                 if (status) console.log(`${data.item} IN`);
                 else console.log(`${data.item} OUT`);
               }}

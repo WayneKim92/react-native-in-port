@@ -2,14 +2,14 @@ import _ from 'lodash';
 import { DeviceEventEmitter, FlatList, ScrollView } from 'react-native';
 import React, { ReactElement, useCallback } from 'react';
 
-interface InViewPortScrollEmitterProps {
+interface LightHouseProps {
   children: ReactElement;
   radarBeacon: string;
   throttleTime?: number;
   isFocused?: boolean;
 }
 
-const LightHouse = (props: InViewPortScrollEmitterProps) => {
+const LightHouse = (props: LightHouseProps) => {
   const {
     radarBeacon,
     throttleTime = 500,
