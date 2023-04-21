@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { createPort } from 'react-native-on-viewport';
+import { createPort } from 'react-native-in-port';
 import { Box } from '../components';
 import { colors } from '../constant';
 
@@ -17,7 +17,8 @@ const ScrollViewExample = () => {
           <Ship
             key={index}
             detectType={'completely'}
-            viewportMargin={{ top: 400, bottom: 400}}
+            detectDirection={'vertical'}
+            viewportMargin={{ top: 100, bottom: 100, left: 100}}
             onPort={(isIn) => {
               return { backgroundColor: isIn ? 'black' : color };
             }}

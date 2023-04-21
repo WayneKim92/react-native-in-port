@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FlatList } from 'react-native';
-import { createPort } from 'react-native-on-viewport';
+import { createPort } from 'react-native-in-port';
 
 import { Box } from '../components';
 import { colors } from '../constant';

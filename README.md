@@ -1,17 +1,17 @@
-# react-native-on-viewport
+# react-native-in-port
 
 Detect if a component is on a Viewport.
 
 ## Installation
 
 ```sh
-npm install react-native-on-viewport
+npm install react-native-in-port
 ```
 
 ## Usage
 
 ```js
-import { multiply } from 'react-native-on-viewport';
+import { multiply } from 'react-native-in-port';
 
 // ...
 

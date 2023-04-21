@@ -3,6 +3,7 @@ import { DeviceEventEmitter, Dimensions, View } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 
 type DetectType = 'completely' | 'incompletely';
+type DetectDirection = 'both' | 'vertical' | 'horizontal';
 
 type DetectTypeObject = {
   [key in DetectType]: boolean;
@@ -22,6 +23,7 @@ export interface ShipProps {
   onPort: (isDetected: boolean) => any;
   subscribeScroll?: boolean;
   detectType?: DetectType;
+  detectDirection?: DetectDirection;
   viewportMargin?: ViewportMargin;
 }
 
@@ -43,6 +45,7 @@ const Ship = (props: ShipProps) => {
     onPort,
     viewportMargin,
     detectType = 'completely',
+    detectDirection = 'both',
   } = props;
 
   const [childrenProps, setChildrenProps] = useState(null);
@@ -71,17 +74,22 @@ const Ship = (props: ShipProps) => {
       left: pageX,
     };
 
+    const isCompletelyVerticalContained = element.top >= viewport.top && element.bottom <= viewport.bottom;
+    const isCompletelyHorizontalContained = element.left >= viewport.left && element.right <= viewport.right;
     const isCompletelyContained =
-      element.top >= viewport.top &&
-      element.right <= viewport.right &&
-      element.bottom <= viewport.bottom &&
-      element.left >= viewport.left;
+      detectDirection === 'both' ? (isCompletelyVerticalContained && isCompletelyHorizontalContained)
+        : detectDirection === 'horizontal'
+          ? isCompletelyHorizontalContained
+          : isCompletelyVerticalContained;
 
+    const isIncompletelyVerticalContained = viewport.left < element.right && viewport.right > element.left;
+    const isIncompletelyHorizontalContained = viewport.top < element.bottom && viewport.bottom > element.top;
     const isIncompletelyContained =
-      viewport.left < element.right &&
-      viewport.right > element.left &&
-      viewport.top < element.bottom &&
-      viewport.bottom > element.top;
+      detectDirection === 'both' ? (isIncompletelyVerticalContained && isIncompletelyHorizontalContained)
+        : detectDirection === 'horizontal'
+          ? isIncompletelyHorizontalContained
+          : isIncompletelyVerticalContained;
+
 
     const detectCondition: DetectTypeObject = {
       'completely': isCompletelyContained,

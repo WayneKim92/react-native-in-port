@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "react-native-on-viewport": ["./src/index"]
+      "react-native-in-port": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

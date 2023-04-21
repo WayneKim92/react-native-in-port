@@ -1,5 +1,5 @@
 {
-  "name": "react-native-on-viewport",
+  "name": "react-native-in-port",
   "version": "0.1.0",
   "description": "test",
   "main": "lib/commonjs/index",
@@ -40,13 +40,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/WayneKim92/react-native-on-viewport",
+  "repository": "https://github.com/WayneKim92/react-native-in-port",
   "author": "wayne-kim <eunchan0817@gmail.com> (https://github.com/WayneKim92)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/WayneKim92/react-native-on-viewport/issues"
+    "url": "https://github.com/WayneKim92/react-native-in-port/issues"
   },
-  "homepage": "https://github.com/WayneKim92/react-native-on-viewport#readme",
+  "homepage": "https://github.com/WayneKim92/react-native-in-port#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
