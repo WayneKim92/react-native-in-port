@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList } from 'react-native';
 import { createPort } from 'react-native-on-viewport';
 
 import { Box } from '../components';
@@ -9,25 +9,23 @@ const { LightHouse, Ship } = createPort('alpha');
 
 const FlatListExample = () => {
   return (
-    <View>
-      <LightHouse throttleTime={100}>
-        <FlatList
-          data={colors}
-          renderItem={(data) => {
-            return (
-              <Ship
-                viewportMargin={{ bottom: 400 }}
-                detectType={'completely'}
-                onPort={(isIn) => {
-                  return { backgroundColor: isIn ? 'black' : data.item };
-                }}
-              >
-                <Box backgroundColor={data.item} />
-              </Ship>
-            );
-          }} />
-      </LightHouse>
-    </View>
+    <LightHouse throttleTime={100}>
+      <FlatList
+        data={colors}
+        renderItem={(data) => {
+          return (
+            <Ship
+              detectType={'completely'}
+              viewportMargin={{ top: 64, bottom: 48 }}
+              onPort={(isIn) => {
+                return { backgroundColor: isIn ? 'black' : data.item };
+              }}
+            >
+              <Box backgroundColor={data.item} />
+            </Ship>
+          );
+        }} />
+    </LightHouse>
   );
 };
 
