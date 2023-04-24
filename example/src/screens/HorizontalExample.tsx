@@ -12,7 +12,7 @@ const { LightHouse: LightHouse2, Ship: Ship2 } = createPort('HORIZONTAL2');
 
 const HorizontalExample = () => {
   return (
-    <View style={{ flex:1 }}>
+    <View style={{ flex: 1 }}>
       <LightHouse1 throttleTime={100}>
         <ScrollView
           horizontal={true}
@@ -23,13 +23,14 @@ const HorizontalExample = () => {
           {colors.map((color, index) => (
             <Ship1
               key={index}
-              detectType={'completely'}
-              detectDirection={'horizontal'}
+              detectPercent={100}
               onPort={(isIn) => {
                 return { backgroundColor: isIn ? 'black' : color };
               }}
             >
-              <View style={{ width: 150, height: '100%', backgroundColor: color }} />
+              <View
+                style={{ width: 150, height: '100%', backgroundColor: color }}
+              />
             </Ship1>
           ))}
         </ScrollView>
@@ -43,17 +44,23 @@ const HorizontalExample = () => {
           renderItem={(data) => {
             return (
               <Ship2
-                detectType={'completely'}
-                detectDirection={'horizontal'}
-                viewportMargin={{ left: 10,right: 10 }}
+                detectPercent={25}
+                viewportMargin={{ left: 10, right: 10 }}
                 onPort={(isIn) => {
                   return { backgroundColor: isIn ? 'black' : data.item };
                 }}
               >
-                <View style={{ width: 200, height: '100%', backgroundColor: data.item }} />
+                <View
+                  style={{
+                    width: 200,
+                    height: '100%',
+                    backgroundColor: data.item,
+                  }}
+                />
               </Ship2>
             );
-          }} />
+          }}
+        />
       </LightHouse2>
     </View>
   );
@@ -61,7 +68,6 @@ const HorizontalExample = () => {
 
 const styles = StyleSheet.create({
   scrollView: { flexGrow: 1, flexShrink: 1 },
-
 });
 
 export default HorizontalExample;

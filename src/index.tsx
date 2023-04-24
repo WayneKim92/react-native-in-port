@@ -10,7 +10,10 @@ type ShipPropsWithoutRadarBeaconProps = Omit<ShipProps, 'radarBeacon'>;
  */
 export const createPort = (radarBeacon: string) => {
   return {
-    LightHouse: ({ children, ...otherProps }: LightHouseWithoutRadarBeaconProps) => (
+    LightHouse: ({
+      children,
+      ...otherProps
+    }: LightHouseWithoutRadarBeaconProps) => (
       <LightHouse
         {...otherProps}
         children={children}
@@ -18,11 +21,7 @@ export const createPort = (radarBeacon: string) => {
       />
     ),
     Ship: ({ children, ...otherProps }: ShipPropsWithoutRadarBeaconProps) => (
-      <Ship
-        {...otherProps}
-        radarBeacon={radarBeacon}
-        children={children}
-      />
+      <Ship {...otherProps} radarBeacon={radarBeacon} children={children} />
     ),
   };
 };

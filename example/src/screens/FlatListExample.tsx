@@ -15,16 +15,17 @@ const FlatListExample = () => {
         renderItem={(data) => {
           return (
             <Ship
-              detectType={'completely'}
+              detectPercent={50}
               viewportMargin={{ top: 64, bottom: 48 }}
               onPort={(isIn) => {
-                return { backgroundColor: isIn ? 'black' : data.item };
+                return { backgroundColor: isIn ? 'gray' : data.item };
               }}
             >
               <Box backgroundColor={data.item} />
             </Ship>
           );
-        }} />
+        }}
+      />
     </LightHouse>
   );
 };
