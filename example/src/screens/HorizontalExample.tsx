@@ -10,6 +10,11 @@ import { colors } from '../constant';
 const { LightHouse: LightHouse1, Ship: Ship1 } = createPort('HORIZONTAL1');
 const { LightHouse: LightHouse2, Ship: Ship2 } = createPort('HORIZONTAL2');
 
+// @ts-ignore
+const Box = ({color}) => <View
+  style={{ width: 150, height: '100%', backgroundColor: color }}
+/>
+
 const HorizontalExample = () => {
   return (
     <View style={{ flex: 1 }}>
@@ -25,12 +30,12 @@ const HorizontalExample = () => {
               key={index}
               detectPercent={100}
               onPort={(isIn) => {
-                return { backgroundColor: isIn ? 'black' : color };
+                return {
+                    color: isIn ? 'black' : color
+                };
               }}
             >
-              <View
-                style={{ width: 150, height: '100%', backgroundColor: color }}
-              />
+              <Box color={color} />
             </Ship1>
           ))}
         </ScrollView>
@@ -44,19 +49,13 @@ const HorizontalExample = () => {
           renderItem={(data) => {
             return (
               <Ship2
-                detectPercent={25}
+                detectPercent={100}
                 viewportMargin={{ left: 10, right: 10 }}
                 onPort={(isIn) => {
-                  return { backgroundColor: isIn ? 'black' : data.item };
+                  return { color: isIn ? 'black' : data.item };
                 }}
               >
-                <View
-                  style={{
-                    width: 200,
-                    height: '100%',
-                    backgroundColor: data.item,
-                  }}
-                />
+                <Box color={data.item} />
               </Ship2>
             );
           }}

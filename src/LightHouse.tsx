@@ -50,8 +50,8 @@ const LightHouse = (props: LightHouseProps) => {
 
   const childrenType = React.Children.only(children).type;
   if (childrenType !== ScrollView && childrenType !== FlatList) {
-    throw Error(
-      '🐞 In Ship Package : children prop of LightHouse can only be ScrollView or FlatList.'
+    console.warn(
+      '🐞[react-native-in-port]: children prop of LightHouse can only be ScrollView or FlatList.'
     );
   }
 
