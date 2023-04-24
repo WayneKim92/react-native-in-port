@@ -9,18 +9,13 @@ const { LightHouse, Ship } = createPort('beta');
 const ScrollViewExample = () => {
   return (
     <LightHouse throttleTime={100}>
-      <ScrollView
-        style={styles.scrollView}
-        scrollEventThrottle={1}
-      >
+      <ScrollView style={styles.scrollView} scrollEventThrottle={1}>
         {colors.map((color, index) => (
           <Ship
             key={index}
-            detectType={'completely'}
-            detectDirection={'vertical'}
-            viewportMargin={{ top: 100, bottom: 100, left: 100}}
+            detectPercent={100}
             onPort={(isIn) => {
-              return { backgroundColor: isIn ? 'black' : color };
+              return { backgroundColor: isIn ? 'gray' : color };
             }}
           >
             <Box backgroundColor={color} />
@@ -33,7 +28,6 @@ const ScrollViewExample = () => {
 
 const styles = StyleSheet.create({
   scrollView: { flexGrow: 1, flexShrink: 1 },
-
 });
 
 export default ScrollViewExample;

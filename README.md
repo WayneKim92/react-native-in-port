@@ -19,21 +19,15 @@ const ScrollViewExample = () => {
   return (
     // LightHouse's child component can only be ScrollView or FlatList.
     // When scroll and focus events occur, LightHouse asks the Ship if it is within a (view)port.
-    <LightHouse>
-      <ScrollView>
+    // throttleTime: dafault === 500
+    <LightHouse throttleTime={100}>
+      <ScrollView style={styles.scrollView} scrollEventThrottle={1}>
         {colors.map((color, index) => (
           <Ship
             key={index}
-
-            // Detects when a child component is completely contained within the viewport.
-            detectType={'completely'} // or incompletely
-
-            // Detect based on the specific orientation of the component.
-            detectDirection={'vertical'} // or both | horizontal
-
+            detectPercent={100}
             // Adjust the detection condition by adjusting the viewport area.
             viewportMargin={{ top: 100, bottom: 100, left: 100}}
-
             onPort={(isIn) => {
               // You may call the tracking API in this part.
               // --------------------------------------------
