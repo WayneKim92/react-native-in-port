@@ -1,5 +1,6 @@
 import React, {
   ReactElement,
+  ReactPropTypes,
   useCallback,
   useEffect,
   useRef,
@@ -7,74 +8,25 @@ import React, {
 } from 'react';
 import { DeviceEventEmitter, Dimensions, View } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-
-import type { IntRange } from './utils/type';
+import {
+  calculatePercentContaining,
+  getViewportWithSpaceVariation,
+} from './utils';
+import type { IntRange, ViewportMargin } from './types';
 
 type DetectPercent = IntRange<1, 101>;
-
-type ViewportMargin = {
-  top?: number;
-  right?: number;
-  bottom?: number;
-  left?: number;
-};
 
 export interface ShipProps {
   radarBeacon: string;
   children: ReactElement;
   // The return value is passed as children's props.
-  onPort: (isDetected: boolean) => any;
+  onPort: (state: {
+    isInPort: boolean;
+    inPortCount: number;
+  }) => { nextProps: any; isValidInPort: boolean } | void;
   viewportMargin?: ViewportMargin;
   detectPercent?: DetectPercent;
 }
-
-interface Rectangle {
-  top: number;
-  left: number;
-  right: number;
-  bottom: number;
-}
-
-function calculatePercentContaining(a: Rectangle, b: Rectangle): number {
-  // calculate the area of intersection between a and b
-  const overlapLeft = Math.max(a.left, b.left);
-  const overlapRight = Math.min(a.right, b.right);
-  const overlapTop = Math.max(a.top, b.top);
-  const overlapBottom = Math.min(a.bottom, b.bottom);
-
-  const overlapWidth = overlapRight - overlapLeft;
-  const overlapHeight = overlapBottom - overlapTop;
-  const overlapArea = Math.max(0, overlapWidth) * Math.max(0, overlapHeight);
-
-  // calculate the area of a
-  const aWidth = a.right - a.left;
-  const aHeight = a.bottom - a.top;
-  const aArea = aWidth * aHeight;
-
-  // calculate the percent of a that overlaps with b
-  const percent = (overlapArea / aArea) * 100;
-
-  return percent;
-}
-
-const getViewportWithSpaceVariation = (
-  viewportMargin: ViewportMargin | undefined
-) => {
-  const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
-
-  return viewportMargin
-    ? {
-        top: viewportMargin.top ? viewportMargin.top : 0,
-        right: viewportMargin.right
-          ? windowWidth - viewportMargin.right
-          : windowWidth,
-        bottom: viewportMargin.bottom
-          ? windowHeight - viewportMargin.bottom
-          : windowHeight,
-        left: viewportMargin.left ? viewportMargin.left : 0,
-      }
-    : undefined;
-};
 
 const Ship = (props: ShipProps) => {
   const {
@@ -85,7 +37,10 @@ const Ship = (props: ShipProps) => {
     detectPercent = 50,
   } = props;
 
-  const [childrenProps, setChildrenProps] = useState(null);
+  const inPortCountRef = useRef(0);
+  const [childrenProps, setChildrenProps] = useState<
+    ReactPropTypes | undefined
+  >();
   const viewRef = useRef<View>(null);
 
   const isFocused = useIsFocused();
@@ -126,10 +81,21 @@ const Ship = (props: ShipProps) => {
         calculatePercentContaining(element, viewport) >= detectPercent;
 
       if (onPort) {
-        const newChildrenProps = onPort(isDetected);
+        const payload = onPort({
+          isInPort: isDetected,
+          inPortCount: inPortCountRef.current,
+        });
 
-        if (newChildrenProps) {
-          setChildrenProps(newChildrenProps);
+        if (payload) {
+          const { nextProps = undefined, isValidInPort = false } = payload;
+
+          if (isValidInPort) {
+            inPortCountRef.current = inPortCountRef.current + 1;
+          }
+
+          if (nextProps) {
+            setChildrenProps(nextProps);
+          }
         }
       }
     },
@@ -145,10 +111,17 @@ const Ship = (props: ShipProps) => {
   }, [isFocused, handleMeasure]);
 
   useEffect(() => {
-    const eventListener = DeviceEventEmitter.addListener(radarBeacon, () => {
-      // @ts-ignore
-      viewRef.current.measure(handleMeasure);
-    });
+    const eventListener = DeviceEventEmitter.addListener(
+      radarBeacon,
+      ({ event, isNeedResetCountOnFocus }) => {
+        // @ts-ignore
+        viewRef.current.measure(handleMeasure);
+
+        if (event === 'focus' && isNeedResetCountOnFocus) {
+          inPortCountRef.current = 0;
+        }
+      }
+    );
 
     return () => {
       eventListener.remove();

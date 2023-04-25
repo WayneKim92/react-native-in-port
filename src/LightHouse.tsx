@@ -12,24 +12,35 @@ export interface LightHouseProps {
   children: ReactElement;
   radarBeacon: string;
   throttleTime?: number;
+  isNeedResetCountOnFocus?: boolean;
 }
 
+export type LightHouseEvent = {
+  event: string;
+  isNeedResetCountOnFocus?: boolean;
+};
+
 const LightHouse = (props: LightHouseProps) => {
-  const { radarBeacon, throttleTime = 500, children } = props;
+  const {
+    radarBeacon,
+    throttleTime = 500,
+    children,
+    isNeedResetCountOnFocus = true,
+  } = props;
 
   const isFirstFocus = useRef(true);
 
   const isFocused = useIsFocused();
 
-  const emitTrackEvent = (message: string) => {
-    DeviceEventEmitter.emit(radarBeacon, message);
+  const emitTrackEvent = (event: LightHouseEvent) => {
+    DeviceEventEmitter.emit(radarBeacon, event);
   };
 
   const trackWithDelay = _.throttle(emitTrackEvent, throttleTime);
 
   const _onScroll = (event: LayoutChangeEvent) => {
     if (isFocused) {
-      trackWithDelay('scroll');
+      trackWithDelay({ event: 'scroll' });
     }
 
     const childOnScroll = children.props.onScroll;
@@ -44,8 +55,8 @@ const LightHouse = (props: LightHouseProps) => {
         return;
       }
 
-      trackWithDelay('focus');
-    }, [trackWithDelay])
+      trackWithDelay({ event: 'focus', isNeedResetCountOnFocus });
+    }, [trackWithDelay, isNeedResetCountOnFocus])
   );
 
   const childrenType = React.Children.only(children).type;

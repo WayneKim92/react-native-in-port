@@ -11,9 +11,9 @@ const { LightHouse: LightHouse1, Ship: Ship1 } = createPort('HORIZONTAL1');
 const { LightHouse: LightHouse2, Ship: Ship2 } = createPort('HORIZONTAL2');
 
 // @ts-ignore
-const Box = ({color}) => <View
-  style={{ width: 150, height: '100%', backgroundColor: color }}
-/>
+const Box = ({ color }) => (
+  <View style={{ width: 150, height: '100%', backgroundColor: color }} />
+);
 
 const HorizontalExample = () => {
   return (
@@ -29,9 +29,12 @@ const HorizontalExample = () => {
             <Ship1
               key={index}
               detectPercent={100}
-              onPort={(isIn) => {
+              onPort={(state) => {
+                const { isInPort, inPortCount } = state;
+
                 return {
-                    color: isIn ? 'black' : color
+                  nextProps: { backgroundColor: isInPort ? 'gray' : color },
+                  isValidInPort: inPortCount < 1,
                 };
               }}
             >
@@ -51,8 +54,15 @@ const HorizontalExample = () => {
               <Ship2
                 detectPercent={100}
                 viewportMargin={{ left: 10, right: 10 }}
-                onPort={(isIn) => {
-                  return { color: isIn ? 'black' : data.item };
+                onPort={(state) => {
+                  const { isInPort, inPortCount } = state;
+
+                  return {
+                    nextProps: {
+                      backgroundColor: isInPort ? 'gray' : data.item,
+                    },
+                    isValidInPort: inPortCount < 1,
+                  };
                 }}
               >
                 <Box color={data.item} />
