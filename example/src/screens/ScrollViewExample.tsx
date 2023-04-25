@@ -14,8 +14,13 @@ const ScrollViewExample = () => {
           <Ship
             key={index}
             detectPercent={100}
-            onPort={(isIn) => {
-              return { backgroundColor: isIn ? 'gray' : color };
+            onPort={(state) => {
+              const { isInPort, inPortCount } = state;
+
+              return {
+                nextProps: { backgroundColor: isInPort ? 'gray' : color },
+                isValidInPort: inPortCount < 1,
+              };
             }}
           >
             <Box backgroundColor={color} />

@@ -17,8 +17,13 @@ const FlatListExample = () => {
             <Ship
               detectPercent={50}
               viewportMargin={{ top: 64, bottom: 48 }}
-              onPort={(isIn) => {
-                return { backgroundColor: isIn ? 'gray' : data.item };
+              onPort={(state) => {
+                const { isInPort, inPortCount } = state;
+
+                return {
+                  nextProps: { backgroundColor: isInPort ? 'gray' : data.item },
+                  isValidInPort: inPortCount < 1,
+                };
               }}
             >
               <Box backgroundColor={data.item} />
