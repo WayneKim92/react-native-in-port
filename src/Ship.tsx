@@ -114,8 +114,7 @@ const Ship = (props: ShipProps) => {
     const eventListener = DeviceEventEmitter.addListener(
       radarBeacon,
       ({ event, isNeedResetCountOnFocus }) => {
-        // @ts-ignore
-        viewRef.current.measure(handleMeasure);
+        viewRef?.current?.measure(handleMeasure);
 
         if (event === 'focus' && isNeedResetCountOnFocus) {
           inPortCountRef.current = 0;

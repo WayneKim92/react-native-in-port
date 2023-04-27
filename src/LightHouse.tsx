@@ -55,8 +55,9 @@ const LightHouse = (props: LightHouseProps) => {
         return;
       }
 
-      trackWithDelay({ event: 'focus', isNeedResetCountOnFocus });
-    }, [trackWithDelay, isNeedResetCountOnFocus])
+      emitTrackEvent({ event: 'focus', isNeedResetCountOnFocus });
+      // eslint-disable-next-line
+    }, [isNeedResetCountOnFocus])
   );
 
   const childrenType = React.Children.only(children).type;

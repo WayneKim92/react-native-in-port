@@ -23,7 +23,7 @@ const ScrollViewExample = () => {
 
               return {
                 nextProps: { backgroundColor: isInPort ? 'gray' : color },
-                isValidInPort: inPortCount < 1,
+                isValidInPort: inPortCount < 1 && isInPort,
               };
             }}
           >
