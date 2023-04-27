@@ -1,6 +1,6 @@
 {
   "name": "react-native-in-port",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Use LightHouse and Ship to detect if a children component is inside the Viewport",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
