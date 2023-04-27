@@ -25,10 +25,10 @@ const ScrollViewExample = () => {
         {colors.map((color, index) => (
           <Ship
             key={index}
-            detectPercent={100}
+            detectPercent={50}
             // Adjust the detection condition by adjusting the viewport area.
-            viewportMargin={{ top: 100, bottom: 100, left: 100}}
-            onPort={(isIn) => {
+            viewportMargin={{ top: headerHeight, bottom: 70 }}
+            onPort={(state) => {
               // You may call the tracking API in this part.
               // --------------------------------------------
               // await analytics().logEvent('viewed', {
@@ -37,8 +37,13 @@ const ScrollViewExample = () => {
               // })
               // --------------------------------------------
 
+              const { isInPort, inPortCount } = state;
+
               // Return values can be passed as child props.
-              return { backgroundColor: isIn ? 'black' : color };
+              return {
+                nextProps: { backgroundColor: isInPort ? 'gray' : color },
+                isValidInPort: inPortCount < 1,
+              };
             }}
           >
             <Box backgroundColor={color} />

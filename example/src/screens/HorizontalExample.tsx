@@ -33,7 +33,7 @@ const HorizontalExample = () => {
                 const { isInPort, inPortCount } = state;
 
                 return {
-                  nextProps: { backgroundColor: isInPort ? 'gray' : color },
+                  nextProps: { color: isInPort ? 'gray' : color },
                   isValidInPort: inPortCount < 1,
                 };
               }}
@@ -59,7 +59,7 @@ const HorizontalExample = () => {
 
                   return {
                     nextProps: {
-                      backgroundColor: isInPort ? 'gray' : data.item,
+                      color: isInPort ? 'gray' : data.item,
                     },
                     isValidInPort: inPortCount < 1,
                   };

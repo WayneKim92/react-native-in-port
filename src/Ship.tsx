@@ -23,7 +23,7 @@ export interface ShipProps {
   onPort: (state: {
     isInPort: boolean;
     inPortCount: number;
-  }) => { nextProps: any; isValidInPort: boolean } | void;
+  }) => { nextProps?: any; isValidInPort?: boolean } | void;
   viewportMargin?: ViewportMargin;
   detectPercent?: DetectPercent;
 }
