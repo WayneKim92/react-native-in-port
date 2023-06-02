@@ -9,10 +9,10 @@ npm install react-native-in-port
 ```
 
 ## Example
+| Example  |
+| ------------- |
+| <video src="https://github.com/WayneKim92/react-native-in-port/assets/75321423/24eb55c6-abbe-410e-a363-c179f17a9c9d">  |
 
-<div align="center">
-  <video src="https://user-images.githubusercontent.com/75321423/233711305-2c144676-641c-49c3-97ec-0705dd04195a.mov"></video>
-</div>
 
 ```js
 const ScrollViewExample = () => {
